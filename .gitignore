@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# Ignore generated JS files in src/
+src/**/*.js
+
 # Runtime data
 pids
 *.pid

@@ -1,0 +1,49 @@
+{
+  "name": "@bryanerayner/bank-accounts-model",
+  "version": "0.0.1",
+  "description": "Models describing Bank Accounts in an application",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublish": "tsc",
+    "pretest": "tsc --project tsconfig.test.json",
+    "test": "ava",
+    "posttest": "rimraf ./src/**/*.js",
+    "watch": "npm-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bryanerayner@github.com/bryanerayner/bank-accounts-model.git"
+  },
+  "keywords": [
+    "banking"
+  ],
+  "ava": {
+    "source": [
+      "src/**/*.ts",
+      "!lib/**/*"
+    ],
+    "watch": true
+  },
+  "watch": {
+    "pretest": "./src/**/*.ts"
+  },
+  "typings": "lib/index",
+  "author": "Bryan Rayner",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/bryanerayner/bank-accounts-model/issues"
+  },
+  "homepage": "https://github.com/bryanerayner/bank-accounts-model#readme",
+  "dependencies": {
+    "@bryanerayner/currency-model": "0.0.1",
+    "@bryanerayner/immutable-model-helpers": "^1.0.0",
+    "@bryanerayner/reducer-helpers": "0.0.1",
+    "@types/node-uuid": "0.0.27",
+    "guid": "0.0.12",
+    "immutable": "^3.8.1"
+  },
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "npm-watch": "^0.1.6"
+  }
+}
