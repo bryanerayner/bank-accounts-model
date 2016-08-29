@@ -59,6 +59,7 @@ export interface IRemoveTransactionAction extends Action {
     }
 };
 
+export type BankAccountRelatedAction = IAddBankAccountAction |  IUpdateBankAccountAction | IRemoveBankAccountAction | IAddTransactionAction |     IUpdateTransactionAction |IRemoveTransactionAction; 
 
 export class BankAccountsActions {
 
