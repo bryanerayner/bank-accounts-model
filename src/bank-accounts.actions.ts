@@ -85,6 +85,37 @@ export class BankAccountsActions {
         };
     }
 
+    updateBankAccount(account: BankAccount): IUpdateBankAccountAction {
+
+        let u = new BankAccountRecord({
+            id: account.id,
+            name: account.name,
+            type:account.type,
+            currency:account.currency,
+            owners:account.owners  
+        });
+
+        return {
+            type: UPDATE_BANK_ACCOUNT,
+            payload: {
+                id: account.id,
+                newValue: u
+            }
+        };
+    }
+
+    /**
+     * Remove a bank account
+     */
+    removeBankAccount(id: string): IRemoveBankAccountAction {
+        return {
+            type: REMOVE_BANK_ACCOUNT,
+            payload: {
+                id: id
+            }
+        }
+    }
+
     /**
      * Add a transaction
      */

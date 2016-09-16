@@ -1,5 +1,5 @@
-import { CurrencyCode, currencyCodes } from '@bryanerayner/currency-model';
-export { CurrencyCode, currencyCodes };
+import { CurrencyCode, CurrencyAmount, currencyCodes } from '@bryanerayner/currency-model';
+export { CurrencyCode, CurrencyAmount, currencyCodes };
 export declare function getCurrency(code: string): CurrencyCode;
 import { TypedRecord } from '@bryanerayner/immutable-model-helpers';
 import { Map, List } from 'immutable';
@@ -37,6 +37,12 @@ export interface BankAccount {
 export interface IBankAccountRecord extends BankAccount, TypedRecord<BankAccount> {
 }
 export declare const BankAccountRecord: TypedRecord<BankAccount>;
+export declare const enum TransactionType {
+    NotSet = 0,
+    StartingBalance = 1,
+    Deposit = 2,
+    Withdrawl = 3,
+}
 /**
  * A single transaction in a bank account
  */
@@ -56,7 +62,11 @@ export interface Transaction {
     /**
      * The type of the transaction
      */
-    type: string;
+    type: TransactionType;
+    /**
+     * A custom type which may be provided by the financial institution
+     */
+    customType?: string;
     /**
      * A basic memo of the transaction
      */
@@ -68,20 +78,27 @@ export interface Transaction {
 }
 export interface ITransactionRecord extends TypedRecord<ITransactionRecord>, Transaction {
 }
-export declare const TransactionRecord: TypedRecord<Transaction>;
+export declare const TransactionRecord: any;
 export interface TransactionAmounts {
     /**
      * The amount debited
      */
-    debit: number;
+    debit: CurrencyAmount;
     /**
      * The amount credited
      */
-    credit: number;
+    credit: CurrencyAmount;
 }
 export interface IBankAccountsRecord {
+    /**
+     * Accounts by account ID.
+     */
     accounts: Map<string, IBankAccountRecord>;
     transactions: Map<string, ITransactionRecord>;
     transactionsByAccount: Map<string, List<ITransactionRecord>>;
 }
-export declare const BankAccountsRecord: TypedRecord<IBankAccountsRecord>;
+export interface IBankAccountsRecordInstanceMethods {
+}
+export interface BankAccountsRecordType extends TypedRecord<IBankAccountsRecord>, IBankAccountsRecord {
+}
+export declare const BankAccountsRecord: BankAccountsRecordType;

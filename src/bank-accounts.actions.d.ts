@@ -34,12 +34,18 @@ export interface IRemoveTransactionAction extends Action {
         id: string;
     };
 }
+export declare type BankAccountRelatedAction = IAddBankAccountAction | IUpdateBankAccountAction | IRemoveBankAccountAction | IAddTransactionAction | IUpdateTransactionAction | IRemoveTransactionAction;
 export declare class BankAccountsActions {
     private ensureId(id?);
     /**
      * Add a bank account
      */
     addBankAccount(account: BankAccount): IAddBankAccountAction;
+    updateBankAccount(account: BankAccount): IUpdateBankAccountAction;
+    /**
+     * Remove a bank account
+     */
+    removeBankAccount(id: string): IRemoveBankAccountAction;
     /**
      * Add a transaction
      */

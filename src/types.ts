@@ -1,11 +1,19 @@
 import {
     CurrencyCode,
+    CurrencyAmount,
     currenciesByCode,
     currencyCodes
 } from '@bryanerayner/currency-model';
 
+import * as _ from 'lodash';
+
+import {
+    Iterable
+} from 'immutable';
+
 export {
     CurrencyCode,
+    CurrencyAmount,
     currencyCodes
 };
 
@@ -76,6 +84,13 @@ export const BankAccountRecord = generateTypedRecord<BankAccount>({
     owners: []
 });
 
+export const enum TransactionType {
+    NotSet = 0,
+    StartingBalance = 1,
+    Deposit = 2,
+    Withdrawl = 3
+};
+
 /**
  * A single transaction in a bank account
  */
@@ -98,7 +113,12 @@ export interface Transaction {
     /**
      * The type of the transaction
      */
-    type: string;
+    type: TransactionType;
+
+    /**
+     * A custom type which may be provided by the financial institution
+     */
+    customType?:string;
 
     /**
      * A basic memo of the transaction
@@ -120,8 +140,8 @@ export const TransactionRecord = generateTypedRecord<Transaction>({
     type:'',
     memo:'',
     amount: {
-        debit:0,
-        credit:0
+        debit:null,
+        credit:null
     }
 });
 
@@ -129,44 +149,34 @@ export interface TransactionAmounts {
     /**
      * The amount debited
      */
-    debit: number;
+    debit: CurrencyAmount;
     /**
      * The amount credited
      */
-    credit: number;
+    credit: CurrencyAmount;
 }
 
 export interface IBankAccountsRecord {
+    /**
+     * Accounts by account ID.
+     */
     accounts: Map<string, IBankAccountRecord>;
     transactions: Map<string, ITransactionRecord>;
     transactionsByAccount: Map<string, List< ITransactionRecord>>;
+
+    
 }
 
-export interface IBankAccountsRecordClass extends IBankAccountsRecord {
-    new(defaults?: IBankAccountsRecord):IBankAccountsRecordClass;
+export interface IBankAccountsRecordInstanceMethods {
+
 }
 
-var baseBankAccountsRecord : IBankAccountsRecordClass  = generateTypedRecord<IBankAccountsRecord>({
+export interface BankAccountsRecordType extends TypedRecord<IBankAccountsRecord>, IBankAccountsRecord {
+  
+}
+
+export const BankAccountsRecord : BankAccountsRecordType = generateTypedRecord<IBankAccountsRecord>({
     accounts: Map<string, IBankAccountRecord>(),
     transactions: Map<string, ITransactionRecord>(),
     transactionsByAccount: Map<string, List<ITransactionRecord>>()
 }) as any;
-
-export class BankAccountsRecord  extends (baseBankAccountsRecord) {
-
-    accounts: Map<string, IBankAccountRecord>;
-    transactions: Map<string, ITransactionRecord>;
-    transactionsByAccount: Map<string, List< ITransactionRecord>>;
-
-    constructor(defaults?:IBankAccountsRecord){
-        super(defaults);
-    }
-
-    /**
-     * Whether or not a transaction is linked to another transaction
-     * @param transactionId The transaction to investigate
-     */
-    transactionIsLinked(transactionId:string){
-
-    }
-}
