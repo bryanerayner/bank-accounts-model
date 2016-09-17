@@ -134,11 +134,11 @@ export interface Transaction {
 export interface ITransactionRecord extends TypedRecord<ITransactionRecord>, Transaction {}
 
 export const TransactionRecord = generateTypedRecord<Transaction>({
-    id:'',
-    account:'',
+    id:null,
+    account:null,
     date:null,
-    type:'',
-    memo:'',
+    type:TransactionType.NotSet,
+    memo:null,
     amount: {
         debit:null,
         credit:null

@@ -74,7 +74,45 @@ test('Bank Accounts Reducer should save bank accounts added to the state', t => 
 });
 
 test('Bank Accounts Reducer should allow multiple accounts to be added', t=>{
-    
+
+
+    let reducer = newBankAccountReducer();
+    let actions = getActions();
+    let newState = reducer.reduce(blankBankAccountState(), actions.addBankAccount({
+        id: null,
+        name: 'test',
+        type: BankAccountType.Checking,
+        currency: getCurrency(currencyCodes.USD),
+        owners: ['a', 'b', 'c']
+    }));
+    let lastState = reducer.reduce(newState, actions.addBankAccount({
+        id: null,
+        name: 'test 2',
+        type: BankAccountType.Savings,
+        currency: getCurrency(currencyCodes.USD),
+        owners: ['a', 'b', 'c']
+    }));
+
+    t.is(lastState.accounts.size, 2);
+
+    let account = lastState.accounts.first(),
+        secondAccount = lastState.accounts.last();
+
+    t.is((typeof account.id === 'string'), true);
+
+    t.is(account.name, 'test');
+    t.is(account.type, BankAccountType.Checking);
+    t.deepEqual(account.currency, getCurrency(currencyCodes.USD));
+    t.deepEqual(account.owners, ['a', 'b', 'c']);
+
+
+    t.is((typeof secondAccount.id === 'string'), true);
+
+    t.is(secondAccount.name, 'test 2');
+    t.is(secondAccount.type, BankAccountType.Savings);
+    t.deepEqual(secondAccount.currency, getCurrency(currencyCodes.USD));
+    t.deepEqual(secondAccount.owners, ['a', 'b', 'c']);
+
 });
 
 test('Bank Accounts Reducer should throw errors if a bank account is added with a matching ID', t => {
@@ -457,23 +495,6 @@ test('Bank Accounts Reducer should not allow the account of a transaction to be 
                 credit: null
             }
         }));
-    
-    t.notThrows(()=>{
-        let updatedAccount2 = reducer.reduce(updatedAccount, actions.updateTransaction({
-            id: '456',
-            account: 'abc',
-            date: new Date(2016, 0, 1),
-            type: TransactionType.StartingBalance,
-            memo:'',
-            amount: {
-                debit: {
-                    amount:0,
-                    currencyCode:currencyCodes.USD
-                },
-                credit: null
-            }
-        }));
-    });
     t.throws(()=>{
         let updatedAccount2 = reducer.reduce(updatedAccount, actions.updateTransaction({
             id: '456',
@@ -491,4 +512,96 @@ test('Bank Accounts Reducer should not allow the account of a transaction to be 
         }));
     }, 'The account does not exist');
         
+});
+
+test('Bank Accounts Reducer should allow the account of a transaction to be modified, to an account which exists.', t=>{
+        let reducer = newBankAccountReducer();
+    let actions = getActions();
+
+    let existingAccountState = addAccount(reducer, blankBankAccountState(), {
+        id: '12345',
+        name: 'Test Account',
+        type: BankAccountType.Checking,
+        currency: getCurrency(currencyCodes.USD),
+        owners: ['b']
+    });
+
+    let accountsState = reducer.reduce(existingAccountState, actions.addBankAccount({
+        id: 'abcd',
+        name: 'Test Account 3',
+        type: BankAccountType.Checking,
+        currency: getCurrency(currencyCodes.USD),
+        owners: ['b']
+    }));
+
+    let updatedAccount = reducer.reduce(accountsState, actions.addTransaction(
+        {
+            id: '456',
+            account: '12345',
+            date: new Date(2016, 0, 1),
+            type: TransactionType.StartingBalance,
+            memo: '',
+            amount: {
+                debit: {
+                    amount: 0,
+                    currencyCode: currencyCodes.USD
+                },
+                credit: null
+            }
+        }));
+
+        
+
+    t.notThrows(()=>{
+        let updatedAccount2 = reducer.reduce(updatedAccount, actions.updateTransaction({
+            id: '456',
+            account: 'abcd',
+            date: new Date(2016, 0, 1),
+            type: TransactionType.StartingBalance,
+            memo:'',
+            amount: {
+                debit: {
+                    amount:0,
+                    currencyCode:currencyCodes.USD
+                },
+                credit: null
+            }
+        }));
+    });
+        
+});
+///////////////////////////////////////////////////////////////////////////
+//                       Remove Transaction
+///////////////////////////////////////////////////////////////////////////
+
+test('Bank Accounts Reducer should allow the account of a transaction to be modified, to an account which exists.', t=>{
+        let reducer = newBankAccountReducer();
+    let actions = getActions();
+
+    let existingAccountState = addAccount(reducer, blankBankAccountState(), {
+        id: '12345',
+        name: 'Test Account',
+        type: BankAccountType.Checking,
+        currency: getCurrency(currencyCodes.USD),
+        owners: ['b']
+    });
+
+    let updatedAccount = reducer.reduce(existingAccountState, actions.addTransaction(
+        {
+            id: '456',
+            account: '12345',
+            date: new Date(2016, 0, 1),
+            type: TransactionType.Deposit,
+            memo: '',
+            amount: {
+                debit: {
+                    amount: 0,
+                    currencyCode: currencyCodes.USD
+                },
+                credit: null
+            }
+        }));
+    let updatedAccount2 = reducer.reduce(updatedAccount, actions.removeTransaction('456'));
+    t.is(updatedAccount2.transactions.size, 0);
+    t.is(updatedAccount2.transactionsByAccount.get('12345').size, 0);
 });

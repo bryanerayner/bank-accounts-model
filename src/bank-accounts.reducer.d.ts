@@ -1,6 +1,6 @@
 import { IBankAccountsRecord, BankAccountsRecordType } from './types';
-import { BankAccountRelatedAction, IAddBankAccountAction, IUpdateBankAccountAction, IRemoveBankAccountAction, IAddTransactionAction, IUpdateTransactionAction } from './bank-accounts.actions';
-import { Reducer, Action } from '@bryanerayner/reducer-helpers';
+import { BankAccountRelatedAction, IAddBankAccountAction, IUpdateBankAccountAction, IRemoveBankAccountAction, IAddTransactionAction, IUpdateTransactionAction, IRemoveTransactionAction } from './bank-accounts.actions';
+import { Reducer } from '@bryanerayner/reducer-helpers';
 import { TypedRecord } from '@bryanerayner/immutable-model-helpers';
 export declare class BankAccountsReducer implements Reducer<BankAccountsRecordType> {
     constructor();
@@ -28,6 +28,6 @@ export declare class BankAccountsReducer implements Reducer<BankAccountsRecordTy
     /**
      * Remove a transaction
      */
-    _removeTransaction(bankAccountsModel: BankAccountsRecordType, action: Action): BankAccountsRecordType;
+    _removeTransaction(bankAccountsModel: BankAccountsRecordType, action: IRemoveTransactionAction): BankAccountsRecordType;
     private _mutateModel<TModel, TSecondModel>(first, second, updates, firstFieldGetter, secondFieldGetter, pathGenerator);
 }

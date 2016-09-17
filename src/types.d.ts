@@ -78,7 +78,7 @@ export interface Transaction {
 }
 export interface ITransactionRecord extends TypedRecord<ITransactionRecord>, Transaction {
 }
-export declare const TransactionRecord: any;
+export declare const TransactionRecord: TypedRecord<Transaction>;
 export interface TransactionAmounts {
     /**
      * The amount debited

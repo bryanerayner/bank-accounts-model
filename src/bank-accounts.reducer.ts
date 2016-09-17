@@ -17,7 +17,8 @@ import {
 import {
     isEqual,
     each,
-    clone
+    clone,
+    cloneDeep
 } from 'lodash';
 
 
@@ -230,9 +231,10 @@ export class BankAccountsReducer implements Reducer<BankAccountsRecordType> {
             }
             let originalTransaction = bankAccountsModel.transactions.get(id);
             let originalAccount = originalTransaction.account;
-            let accountChanged = newValue.account !== originalAccount;
+            let newAccount = newValue.account;
+            let accountChanged = newAccount !== originalAccount;
 
-            if (accountChanged && !bankAccountsModel.accounts.has(newValue.account)){
+            if (!bankAccountsModel.accounts.has(newAccount)){
                 throwErr('The account does not exist');
             }
 
@@ -242,7 +244,7 @@ export class BankAccountsReducer implements Reducer<BankAccountsRecordType> {
                 .withMutations((mV)=>{
                     each(['account', 'date', 'type', 'memo', 'amount'],
                     (key)=>{
-                        mV.set(key, newValue[key]);
+                        mV.set(key, cloneDeep( newValue[key]));
                     });
                     return mV; 
                 });
@@ -261,7 +263,8 @@ export class BankAccountsReducer implements Reducer<BankAccountsRecordType> {
                         return tByAccount.filterNot(matchesTransactionId).toList();
                     });
                     bankAccountsModel = bankAccountsModel.updateIn(
-                        ['transactionsByAccount', modifiedTransaction.account],
+                        ['transactionsByAccount', newAccount],
+                        List<ITransactionRecord>(),
                         (tByAccount:List<ITransactionRecord>)=>{
                             return tByAccount
                                 .filterNot(matchesTransactionId)
@@ -286,7 +289,32 @@ export class BankAccountsReducer implements Reducer<BankAccountsRecordType> {
     /**
      * Remove a transaction
      */
-    _removeTransaction(bankAccountsModel: BankAccountsRecordType, action: Action) {
+    _removeTransaction(bankAccountsModel: BankAccountsRecordType, action: IRemoveTransactionAction) {
+        let {
+            type,
+            payload
+        } = action;
+        if (type === REMOVE_TRANSACTION) {
+            let {
+                id
+            } = payload;
+            if (bankAccountsModel.transactions.has(id)){
+                let pathToTransaction = ['transactions', id];
+
+                let transaction: ITransactionRecord = bankAccountsModel.transactions.get(id);
+
+                bankAccountsModel = bankAccountsModel.removeIn(['transactions', id]);
+
+                bankAccountsModel = bankAccountsModel.updateIn(
+                    ['transactionsByAccount', transaction.account],
+                    List<ITransactionRecord>(),
+                    (v: List<ITransactionRecord>)=>{
+                        return v.filterNot((t)=>t.id === id).toList();
+                    });
+
+                return bankAccountsModel;
+            }
+        }
         return bankAccountsModel;
     }
 
