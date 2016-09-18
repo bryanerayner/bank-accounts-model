@@ -167,6 +167,12 @@ export interface IBankAccountsRecord {
     
 }
 
+export interface BankAccounts {
+    accounts: {[accountId: string]: BankAccount};
+    transactions: {[transactionId:string]: Transaction};
+    transactionsByAccount: {[accountId:string]: Array<Transaction>};
+}
+
 export interface IBankAccountsRecordInstanceMethods {
 
 }

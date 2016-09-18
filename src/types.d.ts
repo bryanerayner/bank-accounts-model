@@ -97,6 +97,17 @@ export interface IBankAccountsRecord {
     transactions: Map<string, ITransactionRecord>;
     transactionsByAccount: Map<string, List<ITransactionRecord>>;
 }
+export interface BankAccounts {
+    accounts: {
+        [accountId: string]: BankAccount;
+    };
+    transactions: {
+        [transactionId: string]: Transaction;
+    };
+    transactionsByAccount: {
+        [accountId: string]: Array<Transaction>;
+    };
+}
 export interface IBankAccountsRecordInstanceMethods {
 }
 export interface BankAccountsRecordType extends TypedRecord<IBankAccountsRecord>, IBankAccountsRecord {

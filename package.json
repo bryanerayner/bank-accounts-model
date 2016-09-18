@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/bryanerayner/bank-accounts-model#readme",
   "dependencies": {
-    "@bryanerayner/currency-model": "0.0.4",
+    "@bryanerayner/currency-model": "^0.0.5",
     "@bryanerayner/immutable-model-helpers": "^1.0.0",
     "@bryanerayner/reducer-helpers": "0.0.1",
     "@types/lodash": "^4.14.34",
